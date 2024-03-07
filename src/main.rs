@@ -1,6 +1,8 @@
 #![allow(unused)]
 
-use axum::extract::Query;
+use std::string;
+
+use axum::extract::{Path, Query};
 use axum::response::Html;
 use axum::response::IntoResponse;
 use axum::routing::get;
@@ -19,7 +21,8 @@ async fn main() {
 
     let routes_hello = Router::new()
         .route("/hello", get(handler_hello))
-        .route("/helloParam", get(handler_hello_param));
+        .route("/helloParam", get(handler_hello_param))
+        .route("/helloPath/:param", get(handler_hello_path));
 
     let listener = TcpListener::bind("127.0.0.1:8087").await.unwrap();
     println!("->> LISTENING on {:?}\n", listener.local_addr());
@@ -51,4 +54,13 @@ async fn handler_hello_param(Query(params): Query<HelloParams>) -> impl IntoResp
         "HANDLER"
     );
     Html(format!("Hello <strong>{name}</strong>"))
+}
+
+///helloPath/someName
+async fn handler_hello_path(Path(param): Path<String>) -> impl IntoResponse {
+    println!(
+        "TERMINAL {:<12} - handler_hello_path - {param:?}",
+        "HANDLER"
+    );
+    Html(format!("Hello <strong>{param}</strong>"))
 }
