@@ -9,6 +9,10 @@ edition = "2021"
 axum = "0.7.4"
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread"] }
 
+# Serde
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
 [dev-dependencies]
 anyhow = "1.0.80"
 httpc-test = "0.1.9"
