@@ -52,6 +52,8 @@ async fn test_404_route() -> Result<()> {
 async fn test_api_login_route() -> Result<()> {
     let hc = httpc_test::new_client("http://localhost:8087")?;
 
+    hc.do_get("/helloPath/Rustest").await?.print().await?;
+
     let req_login = hc.do_post(
         "/api/login",
         json!({
@@ -61,6 +63,8 @@ async fn test_api_login_route() -> Result<()> {
     );
 
     req_login.await?.print().await?;
+
+    hc.do_get("/helloPath/Rustest").await?.print().await?;
 
     Ok(())
 }
