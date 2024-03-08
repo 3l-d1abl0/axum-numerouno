@@ -5,11 +5,11 @@ use std::string;
 use axum::extract::{Path, Query};
 use axum::response::Html;
 use axum::response::IntoResponse;
-use axum::routing::get;
+use axum::routing::{get, get_service};
 use axum::Router;
-use tokio::net::TcpListener;
-
 use serde::Deserialize;
+use tokio::net::TcpListener;
+use tower_http::services::{ServeDir, ServeFile};
 
 #[tokio::main]
 async fn main() {
@@ -22,7 +22,8 @@ async fn main() {
     let routes_hello = Router::new()
         .route("/hello", get(handler_hello))
         .route("/helloParam", get(handler_hello_param))
-        .route("/helloPath/:param", get(handler_hello_path));
+        .route("/helloPath/:param", get(handler_hello_path))
+        .fallback_service(routes_static());
 
     let listener = TcpListener::bind("127.0.0.1:8087").await.unwrap();
     println!("->> LISTENING on {:?}\n", listener.local_addr());
@@ -63,4 +64,14 @@ async fn handler_hello_path(Path(param): Path<String>) -> impl IntoResponse {
         "HANDLER"
     );
     Html(format!("Hello <strong>{param}</strong>"))
+}
+
+//static Routing
+fn routes_static() -> Router {
+    Router::new().nest_service(
+        "/",
+        get_service(
+            ServeDir::new("./public/").not_found_service(ServeFile::new("public/404.html")),
+        ),
+    )
 }

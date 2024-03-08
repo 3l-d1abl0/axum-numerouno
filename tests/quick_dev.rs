@@ -28,3 +28,21 @@ async fn test_path_route() -> Result<()> {
 
     Ok(())
 }
+
+#[tokio::test]
+async fn test_static_route() -> Result<()> {
+    let hc = httpc_test::new_client("http://localhost:8087")?;
+
+    hc.do_get("/template.html").await?.print().await?;
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_404_route() -> Result<()> {
+    let hc = httpc_test::new_client("http://localhost:8087")?;
+
+    hc.do_get("/hjasvgdhasvg").await?.print().await?;
+
+    Ok(())
+}
